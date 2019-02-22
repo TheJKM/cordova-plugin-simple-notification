@@ -1,0 +1,22 @@
+{
+  "name": "cordova-plugin-simple-notification",
+  "version": "0.0.1",
+  "description": "Cordova Simple Notification Plugin by Johannes Kreutz",
+  "cordova": {
+    "id": "cordova-plugin-simple-notification",
+    "platforms": [
+      "ios"
+    ]
+  },
+  "keywords": [
+    "cordova",
+    "simple",
+    "notification",
+    "apns",
+    "fcm",
+    "ecosystem:cordova",
+    "cordova-ios"
+  ],
+  "author": "Johannes Kreutz",
+  "license": "Apache 2.0"
+}
