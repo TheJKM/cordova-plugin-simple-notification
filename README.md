@@ -10,7 +10,7 @@ As long as my project is not finished, I don't have the plugin in productive use
 - Provides the basic push features to keep things simple (KISS)
 
 ## Requirements
-- iOS: Works with iOS 10 or newer (tested on 12.1.4 and newer), uses Swift 4
+- iOS: Works with iOS 10 or newer (tested on 10.3.3 and 12.1.4 and newer), uses Swift 4
 - Android: Should work with at least 4.4 (tested on 9)
 
 ## Installation:
@@ -23,19 +23,54 @@ Note: this plugin will not be available via npm as long as it has beta state
 The plugin creates a global `simplenotification` object, where all functions are located.
 
 ### Notification payload structure
-This plugin is designed to work with a predefined notification structure.
+This plugin is designed to work with a predefined notification structure. It awaits some predefined values:
+- title: The title shown in the notification
+- content / body: The longer text shown in the notificaiton
+
+Note: not all values are required - you can provide only custom data, only title and content, and of course both. If you provide neither title nor content no notification will be shown. On the other side, without custom data the message event (see below) won't be called in background.
 
 #### iOS
 
 ```json
-
+{
+    "alert": {
+        "title": "Your impressive title",
+        "body": "Your impressive content",
+        "badge": 2,
+        "sound": "default"
+    },
+    "data": {
+        "anything": "you want"
+    }
+}
 ```
 
 #### Android
 
 ```json
-
+{
+    "data": {
+        "title": "Your impressive title",
+        "content": "Your impressive content",
+        "channel": "importantMessages",
+        "anything": "you want",
+    }
+}
 ```
+
+Note: You also need to specify the devices you want the message to receive, but as that's independent from the plugin, we won't cover it here.
+
+##### Why don't we use the `notification` property on Android?
+
+If we provide title and content via the notification property, the app won't receive those while in background. So, we are unable to deliver a heads up notification on Android 5 and newer. As a solution, we provide title and content via the data property, and the app will fire a notification depending on the importance value while in background.
+
+## Receiving messages
+
+As long as the app is in foreground, every notification will trigger the message event (see below), and it will deliver the whole notification. This is how APNS and FCM works and nothing the plugin can change. So, it's up to you to display the notification or do anything else.
+
+While in background, if you provide a title and / or a body/content, the plugin will display a notification (completely handled by the system on iOS, handled by the plugin on android). If (and only if) you provide custom data, the message event will be called even in background mode. The system gives you a limited amount of time to do some tasks, after this time it will stop your process. This is nothing the plugin can modify, so please look up in the system documentation if you want to learn more.
+
+## Pluign methods
 
 ### Register message event
 You should provide a function which is called when the plugin receives a notification while the app is in foreground, or when the plugin recevies a notification with custom data even while the app is in background.
